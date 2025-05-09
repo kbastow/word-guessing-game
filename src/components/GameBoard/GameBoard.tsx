@@ -10,13 +10,14 @@ import { wordList } from "../../data/wordList.ts";
 
 const GameBoard: React.FC = () => {
   // Initialise random word
-  const [currentWord] = useState(() => {
+  const generateRandomWord = () => {
     const randomWord = wordList[Math.floor(Math.random() * wordList.length)];
-    console.log("The word to guess is:", randomWord.word);
+    console.log("The word to guess is:", randomWord.word.toUpperCase());
     return { word: randomWord.word, hints: randomWord.hints };
-  });
+  };
 
   // State
+  const [currentWord, setCurrentWord] = useState(generateRandomWord);
   const [guessedLetters, setGuessedLetters] = useState<string[]>([]);
   const [revealedLetters, setRevealedLetters] = useState<string[]>(
     Array(currentWord.word.length).fill("_")
@@ -27,10 +28,12 @@ const GameBoard: React.FC = () => {
     return a.toUpperCase() === b.toUpperCase();
   };
 
+  // Handle guess function
   const handleGuess = (guess: string) => {
     if (guess.length === currentWord.word.length) {
       if (isCaseInsensitiveMatch(guess, currentWord.word)) {
         // Correct word guessed: reveal the entire word
+        console.log("Correct word guessed!");
         setRevealedLetters(currentWord.word.split(""));
       } else {
         // Incorrect word guessed: reveal only the correctly guessed letters
@@ -59,6 +62,14 @@ const GameBoard: React.FC = () => {
     }
   };
 
+  const handleRestart = () => {
+    const newWord = generateRandomWord();
+    setCurrentWord(newWord);
+    setGuessedLetters([]);
+    setRevealedLetters(Array(newWord.word.length).fill("_"));
+    console.log("Game reset!");
+  };
+
   return (
     <Box
       className="flex-center"
@@ -75,7 +86,7 @@ const GameBoard: React.FC = () => {
         onGuess={handleGuess}
         wordLength={currentWord.word.length}
       />
-      <RestartButton onRestart={() => {}} />
+      <RestartButton onRestart={handleRestart} />
     </Box>
   );
 };

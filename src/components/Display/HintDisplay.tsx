@@ -11,12 +11,12 @@ const HintDisplay: React.FC<HintDisplayProps> = ({
   totalHints,
 }) => (
   <Box>
-    <Typography variant="h6">Hints</Typography>
+    <Typography variant="h6">Word Hint</Typography>
     {revealedHints.map((hint, i) => (
-      <Typography key={i}>• {hint}</Typography>
+      <Typography key={i}>{hint}</Typography>
     ))}
     <Typography variant="caption">
-      {revealedHints.length}/{totalHints} hints shown
+      Hint {revealedHints.length}/{totalHints}
     </Typography>
   </Box>
 );

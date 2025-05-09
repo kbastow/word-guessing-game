@@ -8,7 +8,13 @@ interface LetterBankProps {
 
 const LetterBank: React.FC<LetterBankProps> = ({ guessedLetters }) => {
   return (
-    <Box display="flex" gap={1} flexWrap="wrap">
+    <Box
+      display="flex"
+      gap={1}
+      flexWrap="wrap"
+      width={400}
+      sx={{ justifyContent: "center" }}
+    >
       {alphabet.map((letter) => (
         <Chip
           key={letter}

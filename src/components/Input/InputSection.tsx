@@ -11,9 +11,8 @@ const InputSection: React.FC<InputSectionProps> = ({ onGuess, wordLength }) => {
   const [input, setInput] = useState("");
 
   const handleSubmit = () => {
-    console.log("Input value:", input);
     if (input.length === wordLength && /^[A-Za-z]+$/.test(input)) {
-      console.log("InputSection submitted guess:", input.toUpperCase());
+      console.log("The word guessed was:", input.toUpperCase());
       onGuess(input.toUpperCase());
       setInput(""); // Clear the input field after submission
     } else {
@@ -28,6 +27,11 @@ const InputSection: React.FC<InputSectionProps> = ({ onGuess, wordLength }) => {
       <TextField
         value={input}
         onChange={(e) => setInput(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            handleSubmit();
+          }
+        }}
         label={`Enter a ${wordLength} letter word`}
         error={isInputInvalid}
         helperText={
