@@ -1,4 +1,3 @@
-// src/data/words.ts
 export const wordList = [
   {
     word: "apple",
