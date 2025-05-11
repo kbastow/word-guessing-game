@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import WordDisplay from "../Display/WordDisplay";
-import Scoreboard from "../Controls/Scoreboard";
+import Scoreboard from "../Display/Scoreboard.tsx";
 import LetterBank from "../Display/LetterBank";
 import InputSection from "../Input/InputSection";
 import RestartButton from "../Controls/RestartButton";

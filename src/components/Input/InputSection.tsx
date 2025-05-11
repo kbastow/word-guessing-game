@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Box, TextField } from "@mui/material";
-import SubmitButton from "./SubmitButton";
+import SubmitButton from "../Controls/SubmitButton";
 
 interface InputSectionProps {
   onGuess: (guess: string) => void;

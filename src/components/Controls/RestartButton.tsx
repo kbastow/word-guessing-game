@@ -6,7 +6,7 @@ interface RestartButtonProps {
 }
 
 const RestartButton: React.FC<RestartButtonProps> = ({ onRestart }) => (
-  <Button color="error" onClick={onRestart}>
+  <Button variant="outlined" onClick={onRestart}>
     Restart Game
   </Button>
 );
