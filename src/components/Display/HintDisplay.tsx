@@ -1,26 +1,23 @@
 import React from "react";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 interface HintDisplayProps {
   revealedHints: string[];
   totalHints: number;
+  currentHintIndex: number;
 }
 
 const HintDisplay: React.FC<HintDisplayProps> = ({
   revealedHints,
   totalHints,
+  currentHintIndex,
 }) => (
   <Box sx={{ display: "flex", flexDirection: "column", p: 1, m: 1 }}>
     <Typography variant="h6">Word Hint</Typography>
-    {revealedHints.map((hint, i) => (
-      <Typography key={i}>{hint}</Typography>
-    ))}
+    {revealedHints.length > 0 && <Typography>{revealedHints[0]}</Typography>}
     <Typography variant="caption">
-      Hint {revealedHints.length}/{totalHints}
+      Hint {currentHintIndex}/{totalHints}
     </Typography>
-    <Button size="small" variant="contained" color="secondary">
-      Get Hint
-    </Button>
   </Box>
 );
 

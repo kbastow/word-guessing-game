@@ -5,6 +5,7 @@ import LetterBank from "../Display/LetterBank";
 import InputSection from "../Input/InputSection";
 import RestartButton from "../Controls/RestartButton";
 import HintDisplay from "../Display/HintDisplay";
+import HintButton from "../Controls/HintButton";
 import { Box } from "@mui/material";
 import { wordList } from "../../data/wordList.ts";
 
@@ -22,6 +23,7 @@ const GameBoard: React.FC = () => {
   const [revealedLetters, setRevealedLetters] = useState<string[]>(
     Array(currentWord.word.length).fill("_")
   );
+  const [revealedHints, setRevealedHints] = useState<number>(1);
 
   // Helper function for upperCase conversion
   const isCaseInsensitiveMatch = (a: string, b: string): boolean => {
@@ -62,12 +64,21 @@ const GameBoard: React.FC = () => {
     }
   };
 
+  // Handle restart function
   const handleRestart = () => {
     const newWord = generateRandomWord();
     setCurrentWord(newWord);
     setGuessedLetters([]);
     setRevealedLetters(Array(newWord.word.length).fill("_"));
+    setRevealedHints(1);
     console.log("Game reset!");
+  };
+
+  // Handle hint function
+  const handleGetHint = () => {
+    if (revealedHints < currentWord.hints.length) {
+      setRevealedHints((prev) => prev + 1);
+    }
   };
 
   return (
@@ -80,7 +91,15 @@ const GameBoard: React.FC = () => {
     >
       <Scoreboard score={0} />
       <WordDisplay wordState={revealedLetters} />
-      <HintDisplay revealedHints={["Hint 1"]} totalHints={3} />
+      <HintDisplay
+        revealedHints={[currentWord.hints[revealedHints - 1]]}
+        totalHints={currentWord.hints.length}
+        currentHintIndex={revealedHints}
+      />
+      <HintButton
+        onHint={handleGetHint}
+        disabled={revealedHints >= currentWord.hints.length}
+      />
       <LetterBank guessedLetters={guessedLetters} />
       <InputSection
         onGuess={handleGuess}
