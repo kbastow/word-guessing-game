@@ -6,7 +6,7 @@ import InputSection from "../Input/InputSection";
 import RestartButton from "../Controls/RestartButton";
 import HintDisplay from "../Display/HintDisplay";
 import HintButton from "../Controls/HintButton";
-import { Box } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { wordList } from "../../data/wordList.ts";
 
 const GameBoard: React.FC = () => {
@@ -24,6 +24,8 @@ const GameBoard: React.FC = () => {
     Array(currentWord.word.length).fill("_")
   );
   const [revealedHints, setRevealedHints] = useState<number>(1);
+  const [gameWon, setGameWon] = useState<boolean>(false);
+  const [correctGuesses, setCorrectGuesses] = useState<number>(0);
 
   // Helper function for upperCase conversion
   const isCaseInsensitiveMatch = (a: string, b: string): boolean => {
@@ -37,6 +39,8 @@ const GameBoard: React.FC = () => {
         // Correct word guessed: reveal the entire word
         console.log("Correct word guessed!");
         setRevealedLetters(currentWord.word.split(""));
+        setGameWon(true);
+        setCorrectGuesses((prev) => prev + 1);
       } else {
         // Incorrect word guessed: reveal only the correctly guessed letters
         setRevealedLetters((prev) =>
@@ -71,7 +75,20 @@ const GameBoard: React.FC = () => {
     setGuessedLetters([]);
     setRevealedLetters(Array(newWord.word.length).fill("_"));
     setRevealedHints(1);
+    setGameWon(false);
+    setCorrectGuesses(0);
     console.log("Game reset!");
+  };
+
+  // Handle continue playing function
+  const handleContinuePlaying = () => {
+    const newWord = generateRandomWord();
+    setCurrentWord(newWord);
+    setGuessedLetters([]);
+    setRevealedLetters(Array(newWord.word.length).fill("_"));
+    setRevealedHints(1);
+    setGameWon(false);
+    console.log("Contining to next word...");
   };
 
   // Handle hint function
@@ -89,7 +106,7 @@ const GameBoard: React.FC = () => {
       gap={4}
       py={4}
     >
-      <Scoreboard score={0} />
+      <Scoreboard score={correctGuesses} />
       <WordDisplay wordState={revealedLetters} />
       <HintDisplay
         revealedHints={[currentWord.hints[revealedHints - 1]]}
@@ -101,10 +118,25 @@ const GameBoard: React.FC = () => {
         disabled={revealedHints >= currentWord.hints.length}
       />
       <LetterBank guessedLetters={guessedLetters} />
-      <InputSection
-        onGuess={handleGuess}
-        wordLength={currentWord.word.length}
-      />
+      {gameWon ? (
+        <Box display="flex" flexDirection="column" gap={4} py={4}>
+          <Typography variant="h5" color="success.main">
+            Congratulations! You guessed the word.
+          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleContinuePlaying}
+          >
+            Next Word
+          </Button>
+        </Box>
+      ) : (
+        <InputSection
+          onGuess={handleGuess}
+          wordLength={currentWord.word.length}
+        />
+      )}
       <RestartButton onRestart={handleRestart} />
     </Box>
   );

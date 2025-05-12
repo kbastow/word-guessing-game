@@ -12,7 +12,7 @@ const HintDisplay: React.FC<HintDisplayProps> = ({
   totalHints,
   currentHintIndex,
 }) => (
-  <Box sx={{ display: "flex", flexDirection: "column", p: 1, m: 1 }}>
+  <Box sx={{ display: "flex", flexDirection: "column", m: 1 }}>
     <Typography variant="h6">Word Hint</Typography>
     {revealedHints.length > 0 && <Typography>{revealedHints[0]}</Typography>}
     <Typography variant="caption">
