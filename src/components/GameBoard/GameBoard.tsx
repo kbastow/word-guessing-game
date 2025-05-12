@@ -30,20 +30,15 @@ const GameBoard: React.FC = () => {
   const [revealedHints, setRevealedHints] = useState<number>(1);
   const [gameWon, setGameWon] = useState<boolean>(false);
   const [gameLost, setGameLost] = useState<boolean>(false);
-  const [totalScore, setTotalScore] = useState<number>(0);
   const [attempts, setAttempts] = useState<number>(0);
+  const [totalScore, setTotalScore] = useState<number>(0);
   const [currentScore, setCurrentScore] = useState<number>(100);
-
-  // Helper function for upperCase conversion
-  const isCaseInsensitiveMatch = (a: string, b: string): boolean => {
-    return a.toUpperCase() === b.toUpperCase();
-  };
 
   // Handle guess function
   const handleGuess = (guess: string) => {
     if (guess.length === currentWord.word.length) {
       const newAttempts = attempts + 1;
-      if (isCaseInsensitiveMatch(guess, currentWord.word)) {
+      if (guess.toUpperCase() === currentWord.word.toUpperCase()) {
         // Correct word guessed: reveal the entire word
         console.log("Correct word guessed! Score for round is:", {
           currentScore,
@@ -66,8 +61,9 @@ const GameBoard: React.FC = () => {
             .map((char, index) =>
               guess
                 .split("")
-                .some((guessedChar) =>
-                  isCaseInsensitiveMatch(guessedChar, char)
+                .some(
+                  (guessedChar) =>
+                    guessedChar.toUpperCase() === char.toUpperCase()
                 )
                 ? currentWord.word[index].toUpperCase()
                 : prev[index]
