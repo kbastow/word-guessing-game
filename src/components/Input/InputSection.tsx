@@ -32,7 +32,7 @@ const InputSection: React.FC<InputSectionProps> = ({ onGuess, wordLength }) => {
             handleSubmit();
           }
         }}
-        label={`Enter a ${wordLength} letter word`}
+        label={`Enter your guess`}
         error={isInputInvalid}
         helperText={
           isInputInvalid ? `Word must be exactly ${wordLength} letters` : ""

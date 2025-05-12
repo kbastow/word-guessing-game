@@ -9,6 +9,8 @@ import HintButton from "../Controls/HintButton";
 import { Box, Button, Typography } from "@mui/material";
 import { wordList } from "../../data/wordList.ts";
 
+const MAX_ATTEMPTS = 5;
+
 const GameBoard: React.FC = () => {
   // Initialise random word
   const generateRandomWord = () => {
@@ -25,7 +27,9 @@ const GameBoard: React.FC = () => {
   );
   const [revealedHints, setRevealedHints] = useState<number>(1);
   const [gameWon, setGameWon] = useState<boolean>(false);
+  const [gameLost, setGameLost] = useState<boolean>(false);
   const [correctGuesses, setCorrectGuesses] = useState<number>(0);
+  const [attempts, setAttempts] = useState<number>(0);
 
   // Helper function for upperCase conversion
   const isCaseInsensitiveMatch = (a: string, b: string): boolean => {
@@ -35,6 +39,7 @@ const GameBoard: React.FC = () => {
   // Handle guess function
   const handleGuess = (guess: string) => {
     if (guess.length === currentWord.word.length) {
+      const newAttempts = attempts + 1;
       if (isCaseInsensitiveMatch(guess, currentWord.word)) {
         // Correct word guessed: reveal the entire word
         console.log("Correct word guessed!");
@@ -56,7 +61,15 @@ const GameBoard: React.FC = () => {
                 : prev[index]
             )
         );
+
+        // Check if maximum attempts is reached
+        if (newAttempts >= MAX_ATTEMPTS) {
+          console.log("Game lost :(");
+          setGameLost(true);
+        }
       }
+
+      setAttempts(newAttempts);
 
       // Add all letters from the guessed word to guessedLetters
       const newGuessedLetters = guess.toUpperCase().split("");
@@ -76,7 +89,9 @@ const GameBoard: React.FC = () => {
     setRevealedLetters(Array(newWord.word.length).fill("_"));
     setRevealedHints(1);
     setGameWon(false);
+    setGameLost(false);
     setCorrectGuesses(0);
+    setAttempts(0);
     console.log("Game reset!");
   };
 
@@ -88,6 +103,8 @@ const GameBoard: React.FC = () => {
     setRevealedLetters(Array(newWord.word.length).fill("_"));
     setRevealedHints(1);
     setGameWon(false);
+    setGameLost(false);
+    setAttempts(0);
     console.log("Contining to next word...");
   };
 
@@ -122,6 +139,19 @@ const GameBoard: React.FC = () => {
         <Box display="flex" flexDirection="column" gap={4} py={4}>
           <Typography variant="h5" color="success.main">
             Congratulations! You guessed the word.
+          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleContinuePlaying}
+          >
+            Next Word
+          </Button>
+        </Box>
+      ) : gameLost ? (
+        <Box display="flex" flexDirection="column" gap={4} py={4}>
+          <Typography variant="h5" color="success.main">
+            You lose! The correct word was "{currentWord.word.toUpperCase()}".
           </Typography>
           <Button
             variant="contained"
