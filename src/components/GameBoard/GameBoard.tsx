@@ -10,6 +10,8 @@ import { Box, Button, Typography } from "@mui/material";
 import { wordList } from "../../data/wordList.ts";
 
 const MAX_ATTEMPTS = 5;
+const POINTS_PER_GUESS = 20;
+const POINTS_PER_HINT = 10;
 
 const GameBoard: React.FC = () => {
   // Initialise random word
@@ -28,8 +30,9 @@ const GameBoard: React.FC = () => {
   const [revealedHints, setRevealedHints] = useState<number>(1);
   const [gameWon, setGameWon] = useState<boolean>(false);
   const [gameLost, setGameLost] = useState<boolean>(false);
-  const [correctGuesses, setCorrectGuesses] = useState<number>(0);
+  const [totalScore, setTotalScore] = useState<number>(0);
   const [attempts, setAttempts] = useState<number>(0);
+  const [currentScore, setCurrentScore] = useState<number>(100);
 
   // Helper function for upperCase conversion
   const isCaseInsensitiveMatch = (a: string, b: string): boolean => {
@@ -42,10 +45,19 @@ const GameBoard: React.FC = () => {
       const newAttempts = attempts + 1;
       if (isCaseInsensitiveMatch(guess, currentWord.word)) {
         // Correct word guessed: reveal the entire word
-        console.log("Correct word guessed!");
+        console.log("Correct word guessed! Score for round is:", {
+          currentScore,
+        });
         setRevealedLetters(currentWord.word.split(""));
         setGameWon(true);
-        setCorrectGuesses((prev) => prev + 1);
+        const scoreForRound = Math.max(
+          0,
+          100 -
+            (newAttempts - 1) * POINTS_PER_GUESS -
+            (revealedHints - 1) * POINTS_PER_HINT
+        );
+        setCurrentScore(scoreForRound);
+        setTotalScore((prev) => prev + scoreForRound);
       } else {
         // Incorrect word guessed: reveal only the correctly guessed letters
         setRevealedLetters((prev) =>
@@ -90,8 +102,9 @@ const GameBoard: React.FC = () => {
     setRevealedHints(1);
     setGameWon(false);
     setGameLost(false);
-    setCorrectGuesses(0);
     setAttempts(0);
+    setCurrentScore(100);
+    setTotalScore(0);
     console.log("Game reset!");
   };
 
@@ -105,7 +118,8 @@ const GameBoard: React.FC = () => {
     setGameWon(false);
     setGameLost(false);
     setAttempts(0);
-    console.log("Contining to next word...");
+    setCurrentScore(100);
+    console.log("Next round.");
   };
 
   // Handle hint function
@@ -113,6 +127,7 @@ const GameBoard: React.FC = () => {
     if (revealedHints < currentWord.hints.length) {
       setRevealedHints((prev) => prev + 1);
     }
+    setCurrentScore((prev) => Math.max(0, prev - POINTS_PER_HINT));
   };
 
   return (
@@ -123,7 +138,7 @@ const GameBoard: React.FC = () => {
       gap={4}
       py={4}
     >
-      <Scoreboard score={correctGuesses} />
+      <Scoreboard score={totalScore} />
       <WordDisplay wordState={revealedLetters} />
       <HintDisplay
         revealedHints={[currentWord.hints[revealedHints - 1]]}
@@ -138,7 +153,8 @@ const GameBoard: React.FC = () => {
       {gameWon ? (
         <Box display="flex" flexDirection="column" gap={4} py={4}>
           <Typography variant="h5" color="success.main">
-            Congratulations! You guessed the word.
+            Congratulations! You guessed the word. Score for this round is:{" "}
+            {currentScore}
           </Typography>
           <Button
             variant="contained"
