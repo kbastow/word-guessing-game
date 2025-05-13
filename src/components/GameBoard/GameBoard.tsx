@@ -89,8 +89,8 @@ const GameBoard: React.FC = () => {
     }
   };
 
-  // Handle restart function
-  const handleRestart = () => {
+  // Helper function to reset the game state
+  const resetGameState = (isRestart: boolean) => {
     const newWord = generateRandomWord();
     setCurrentWord(newWord);
     setGuessedLetters([]);
@@ -100,22 +100,22 @@ const GameBoard: React.FC = () => {
     setGameLost(false);
     setAttempts(0);
     setCurrentScore(100);
-    setTotalScore(0);
-    console.log("Game reset!");
+    if (isRestart) {
+      setTotalScore(0);
+      console.log("Game reset!");
+    } else {
+      console.log("Next round.");
+    }
+  };
+
+  // Handle restart function
+  const handleRestart = () => {
+    resetGameState(true);
   };
 
   // Handle continue playing function
   const handleContinuePlaying = () => {
-    const newWord = generateRandomWord();
-    setCurrentWord(newWord);
-    setGuessedLetters([]);
-    setRevealedLetters(Array(newWord.word.length).fill("_"));
-    setRevealedHints(1);
-    setGameWon(false);
-    setGameLost(false);
-    setAttempts(0);
-    setCurrentScore(100);
-    console.log("Next round.");
+    resetGameState(false);
   };
 
   // Handle hint function
@@ -147,7 +147,7 @@ const GameBoard: React.FC = () => {
       />
       <LetterBank guessedLetters={guessedLetters} />
       {gameWon ? (
-        <Box display="flex" flexDirection="column" gap={4} py={4}>
+        <Box display="flex" flexDirection="column" gap={4} p={4}>
           <Typography variant="h5" color="success.main">
             Congratulations! You guessed the word. Score for this round is:{" "}
             {currentScore}
