@@ -9,7 +9,7 @@ import GameBoard from "./components/GameBoard/GameBoard";
 const App: React.FC = () => (
   <ThemeProvider theme={theme}>
     <CssBaseline />
-    <Container maxWidth="md">
+    <Container maxWidth="sm">
       <GameBoard />
     </Container>
   </ThemeProvider>

@@ -24,6 +24,7 @@ const GameBoard: React.FC = () => {
   // State
   const [currentWord, setCurrentWord] = useState(generateRandomWord);
   const [guessedLetters, setGuessedLetters] = useState<string[]>([]);
+  const [inputValue, setInputValue] = useState<string>("");
   const [revealedLetters, setRevealedLetters] = useState<string[]>(
     Array(currentWord.word.length).fill("_")
   );
@@ -84,9 +85,19 @@ const GameBoard: React.FC = () => {
       setGuessedLetters((prev) => [
         ...new Set([...prev, ...newGuessedLetters]),
       ]);
+      setInputValue("");
     } else {
       console.log("Invalid guess length");
     }
+  };
+
+  const handleLetterClick = (letter: string) => {
+    setInputValue((prev) => prev + letter);
+    console.log("Letter clicked", letter);
+  };
+
+  const handleInputChange = (value: string) => {
+    setInputValue(value);
   };
 
   // Helper function to reset the game state
@@ -145,7 +156,10 @@ const GameBoard: React.FC = () => {
         onHint={handleGetHint}
         disabled={revealedHints >= currentWord.hints.length}
       />
-      <LetterBank guessedLetters={guessedLetters} />
+      <LetterBank
+        guessedLetters={guessedLetters}
+        onLetterClick={handleLetterClick}
+      />
       {gameWon ? (
         <Box display="flex" flexDirection="column" gap={4} p={4}>
           <Typography variant="h5" color="success.main">
@@ -175,6 +189,8 @@ const GameBoard: React.FC = () => {
         </Box>
       ) : (
         <InputSection
+          inputValue={inputValue}
+          onInputChange={handleInputChange}
           onGuess={handleGuess}
           wordLength={currentWord.word.length}
         />

@@ -1,32 +1,35 @@
-import React, { useState } from "react";
 import { Box, TextField } from "@mui/material";
 import SubmitButton from "../Controls/SubmitButton";
 
 interface InputSectionProps {
+  inputValue: string;
+  onInputChange: (calue: string) => void;
   onGuess: (guess: string) => void;
   wordLength: number;
 }
 
-const InputSection: React.FC<InputSectionProps> = ({ onGuess, wordLength }) => {
-  const [input, setInput] = useState("");
-
+const InputSection: React.FC<InputSectionProps> = ({
+  inputValue,
+  onInputChange,
+  onGuess,
+  wordLength,
+}) => {
   const handleSubmit = () => {
-    if (input.length === wordLength && /^[A-Za-z]+$/.test(input)) {
-      console.log("The word guessed was:", input.toUpperCase());
-      onGuess(input.toUpperCase());
-      setInput(""); // Clear the input field after submission
+    if (inputValue.length === wordLength && /^[A-Za-z]+$/.test(inputValue)) {
+      console.log("The word guessed was:", inputValue.toUpperCase());
+      onGuess(inputValue.toUpperCase());
     } else {
       console.log("Invalid input, not submitting.");
     }
   };
 
-  const isInputInvalid = input.length !== wordLength;
+  const isInputInvalid = inputValue.length !== wordLength;
 
   return (
     <Box display="flex" flexDirection="column" gap={2}>
       <TextField
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
+        value={inputValue}
+        onChange={(e) => onInputChange(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             handleSubmit();
