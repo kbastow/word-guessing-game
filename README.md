@@ -52,8 +52,8 @@ src/
     wordList.ts    # Word + hints data source
   styles/
     theme.ts       # Material UI theme configuration
-  hooks/           # Placeholder hooks (currently unused/empty)
-  types/           # Placeholder types (currently unused/empty)
+  hooks/           # Custom hooks (reserved for extracted game logic)
+  types/           # Shared TypeScript types
   App.tsx          # App shell and theme provider
   main.tsx         # React entry point
 ```
@@ -76,7 +76,8 @@ Most logic currently lives in:
 ### Scoring model
 
 - Start each round at **100** points
-- Subtract **20** per incorrect guess attempt (implicitly through final round score calculation)
+- Subtract **20** per guess attempt in the round score formula:
+  `100 - ((attempts - 1) * 20) - ((revealedHints - 1) * 10)`
 - Subtract **10** when requesting a hint
 - Add round score to cumulative total on win
 
