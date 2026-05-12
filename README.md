@@ -81,7 +81,6 @@ Most logic currently lives in:
 
 ## What I'd do differently if I built this again
 
-- Build in TypeScript
 - Develop using an MUI theme to enagance UI styling
 - `src/hooks` and `src/types` are present but empty. The game works as-is, to grow this app, a good next step is to extract scoring/guess/hint state from `GameBoard` into custom hooks and shared types.
 - Integrate an LLM-backed content pipeline to generate and validate wordList entries (word + progressive hints) so game content can scale with less manual authoring.
