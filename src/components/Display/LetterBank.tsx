@@ -1,5 +1,6 @@
 import React from "react";
 import { Box, Chip } from "@mui/material";
+import { lighten } from "@mui/material/styles";
 
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 interface LetterBankProps {
@@ -35,7 +36,7 @@ const LetterBank: React.FC<LetterBankProps> = ({
             key={letter}
             variant={variant}
             color={color}
-            disabled={isGuessed}
+            disabled={isGuessed && !isCorrect}
             label={letter}
             onClick={() => onLetterClick(letter)}
             sx={(theme) => ({
@@ -53,6 +54,12 @@ const LetterBank: React.FC<LetterBankProps> = ({
                   ? theme.palette.success.dark
                   : theme.palette.error.dark,
               }),
+              ...(isGuessed &&
+                isCorrect && {
+                  "&:hover": {
+                    backgroundColor: lighten(theme.palette.success.light, 0.2),
+                  },
+                }),
             })}
           />
         );
