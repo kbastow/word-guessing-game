@@ -1,9 +1,10 @@
+import { useState } from "react";
 import { Box, TextField } from "@mui/material";
 import SubmitButton from "../Controls/SubmitButton";
 
 interface InputSectionProps {
   inputValue: string;
-  onInputChange: (calue: string) => void;
+  onInputChange: (value: string) => void;
   onGuess: (guess: string) => void;
   wordLength: number;
 }
@@ -14,16 +15,18 @@ const InputSection: React.FC<InputSectionProps> = ({
   onGuess,
   wordLength,
 }) => {
+  const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
+
   const handleSubmit = () => {
     if (inputValue.length === wordLength && /^[A-Za-z]+$/.test(inputValue)) {
-      console.log("The word guessed was:", inputValue.toUpperCase());
       onGuess(inputValue.toUpperCase());
     } else {
-      console.log("Invalid input, not submitting.");
+      setHasAttemptedSubmit(true);
     }
   };
 
   const isInputInvalid = inputValue.length !== wordLength;
+  const showError = hasAttemptedSubmit && isInputInvalid;
 
   return (
     <Box display="flex" flexDirection="column" gap={2}>
@@ -36,9 +39,9 @@ const InputSection: React.FC<InputSectionProps> = ({
           }
         }}
         label={`Enter your guess`}
-        error={isInputInvalid}
+        error={showError}
         helperText={
-          isInputInvalid ? `Word must be exactly ${wordLength} letters` : ""
+          showError ? `Word must be exactly ${wordLength} letters` : ""
         }
       />
       <SubmitButton onSubmit={handleSubmit} disabled={isInputInvalid} />
