@@ -36,6 +36,20 @@ const theme = createTheme({
         }),
       },
     },
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          // MUI's default disabled opacity (0.38) drops outlined success/error
+          // Chip text well below WCAG AA (measured ~1.7:1 on this theme's
+          // background). Removing it restores full-strength palette colors
+          // (~4.5-4.7:1) since these chips convey guessed-letter state, not
+          // an unavailable action.
+          "&.Mui-disabled": {
+            opacity: 1,
+          },
+        },
+      },
+    },
   },
 });
 
