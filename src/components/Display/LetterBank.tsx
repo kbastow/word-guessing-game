@@ -18,8 +18,7 @@ const LetterBank: React.FC<LetterBankProps> = ({
       display="flex"
       gap={1}
       flexWrap="wrap"
-      width={400}
-      sx={{ justifyContent: "center" }}
+      sx={{ justifyContent: "center", width: "100%", maxWidth: 400 }}
     >
       {alphabet.map((letter) => {
         const isGuessed = guessedLetters.includes(letter);
@@ -29,15 +28,32 @@ const LetterBank: React.FC<LetterBankProps> = ({
           : isCorrect
           ? "success"
           : "error";
+        const variant = isGuessed ? "filled" : "outlined";
 
         return (
           <Chip
             key={letter}
-            variant="outlined"
+            variant={variant}
             color={color}
             disabled={isGuessed}
             label={letter}
             onClick={() => onLetterClick(letter)}
+            sx={(theme) => ({
+              width: 32,
+              height: 32,
+              borderRadius: "50%",
+              "& .MuiChip-label": {
+                px: 0,
+              },
+              ...(isGuessed && {
+                backgroundColor: isCorrect
+                  ? theme.palette.success.light
+                  : theme.palette.error.light,
+                color: isCorrect
+                  ? theme.palette.success.dark
+                  : theme.palette.error.dark,
+              }),
+            })}
           />
         );
       })}

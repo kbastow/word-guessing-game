@@ -12,6 +12,7 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({ onSubmit, disabled }) => (
     color="primary"
     onClick={onSubmit}
     disabled={disabled}
+    fullWidth
   >
     Submit
   </Button>
