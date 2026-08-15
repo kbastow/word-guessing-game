@@ -9,6 +9,8 @@ lerna-debug.log*
 
 # Node modules
 node_modules
+
+#Build
 dist
 dist-ssr
 *.local
@@ -27,3 +29,6 @@ dist-ssr
 # Environment variables
 .env
 .env.local
+
+#Claude
+CLAUDE.md
