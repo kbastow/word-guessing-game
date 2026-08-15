@@ -7,6 +7,8 @@ import RestartButton from "../Controls/RestartButton";
 import HintDisplay from "../Display/HintDisplay";
 import HintButton from "../Controls/HintButton";
 import { Box, Button, Typography } from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
 import { wordList } from "../../data/wordList.ts";
 
 const MAX_ATTEMPTS = 5;
@@ -158,14 +160,18 @@ const GameBoard: React.FC = () => {
       />
       <LetterBank
         guessedLetters={guessedLetters}
+        wordLetters={currentWord.word.toUpperCase().split("")}
         onLetterClick={handleLetterClick}
       />
       {gameWon ? (
-        <Box display="flex" flexDirection="column" gap={4} p={4}>
-          <Typography variant="h5" color="success.main">
-            Congratulations! You guessed the word. Score for this round is:{" "}
-            {currentScore}
-          </Typography>
+        <Box display="flex" flexDirection="column" alignItems="center" gap={4} p={4}>
+          <Box display="flex" alignItems="center" gap={1}>
+            <CheckCircleIcon color="success" fontSize="large" />
+            <Typography variant="h5" color="success.main">
+              Congratulations! You guessed the word. Score for this round is:{" "}
+              {currentScore}
+            </Typography>
+          </Box>
           <Button
             variant="contained"
             color="primary"
@@ -175,10 +181,13 @@ const GameBoard: React.FC = () => {
           </Button>
         </Box>
       ) : gameLost ? (
-        <Box display="flex" flexDirection="column" gap={4} py={4}>
-          <Typography variant="h5" color="success.main">
-            You lose! The correct word was "{currentWord.word.toUpperCase()}".
-          </Typography>
+        <Box display="flex" flexDirection="column" alignItems="center" gap={4} py={4}>
+          <Box display="flex" alignItems="center" gap={1}>
+            <CancelIcon color="error" fontSize="large" />
+            <Typography variant="h5" color="error.main">
+              You lose! The correct word was "{currentWord.word.toUpperCase()}".
+            </Typography>
+          </Box>
           <Button
             variant="contained"
             color="primary"
