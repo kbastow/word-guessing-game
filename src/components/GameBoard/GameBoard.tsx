@@ -108,6 +108,7 @@ const GameBoard: React.FC = () => {
     const newWord = generateRandomWord();
     setCurrentWord(newWord);
     setGuessedLetters([]);
+    setInputValue("");
     setRevealedLetters(Array(newWord.word.length).fill("_"));
     setRevealedHints(1);
     setGameWon(false);
