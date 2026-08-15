@@ -1,14 +1,32 @@
 import React from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, useTheme, alpha } from "@mui/material";
 
 interface ScoreboardProps {
   score: number;
 }
 
-const Scoreboard: React.FC<ScoreboardProps> = ({ score }) => (
-  <Box aria-live="polite">
-    <Typography variant="h5">Score: {score}</Typography>
-  </Box>
-);
+const Scoreboard: React.FC<ScoreboardProps> = ({ score }) => {
+  const theme = useTheme();
+
+  return (
+    <Box aria-live="polite">
+      <Box
+        sx={{
+          display: "inline-flex",
+          alignItems: "center",
+          px: 3,
+          py: 1,
+          borderRadius: theme.shape.borderRadius * 4,
+          backgroundColor: alpha(theme.palette.primary.main, 0.12),
+          color: theme.palette.primary.main,
+        }}
+      >
+        <Typography variant="h5" component="span">
+          Score: {score}
+        </Typography>
+      </Box>
+    </Box>
+  );
+};
 
 export default Scoreboard;
