@@ -31,6 +31,7 @@ const GameBoard: React.FC = () => {
     Array(currentWord.word.length).fill("_")
   );
   const [revealedHints, setRevealedHints] = useState<number>(1);
+  const [hintDialogOpen, setHintDialogOpen] = useState<boolean>(false);
   const [gameWon, setGameWon] = useState<boolean>(false);
   const [gameLost, setGameLost] = useState<boolean>(false);
   const [attempts, setAttempts] = useState<number>(0);
@@ -113,6 +114,7 @@ const GameBoard: React.FC = () => {
     setGameLost(false);
     setAttempts(0);
     setCurrentScore(100);
+    setHintDialogOpen(false);
     if (isRestart) {
       setTotalScore(0);
       console.log("Game reset!");
@@ -137,6 +139,7 @@ const GameBoard: React.FC = () => {
       setRevealedHints((prev) => prev + 1);
     }
     setCurrentScore((prev) => Math.max(0, prev - POINTS_PER_HINT));
+    setHintDialogOpen(true);
   };
 
   return (
@@ -150,6 +153,8 @@ const GameBoard: React.FC = () => {
       <Scoreboard score={totalScore} />
       <WordDisplay wordState={revealedLetters} />
       <HintDisplay
+        open={hintDialogOpen}
+        onClose={() => setHintDialogOpen(false)}
         revealedHints={[currentWord.hints[revealedHints - 1]]}
         totalHints={currentWord.hints.length}
         currentHintIndex={revealedHints}
@@ -157,6 +162,7 @@ const GameBoard: React.FC = () => {
       <HintButton
         onHint={handleGetHint}
         disabled={revealedHints >= currentWord.hints.length}
+        hintsRemaining={currentWord.hints.length - revealedHints}
       />
       <LetterBank
         guessedLetters={guessedLetters}
