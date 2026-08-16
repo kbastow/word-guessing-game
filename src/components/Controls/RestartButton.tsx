@@ -22,8 +22,12 @@ const RestartButton: React.FC<RestartButtonProps> = ({ onRestart }) => {
 
   return (
     <>
-      <Button variant="outlined" onClick={() => setConfirmOpen(true)}>
-        Restart Game
+      <Button
+        variant="outlined"
+        size="medium"
+        onClick={() => setConfirmOpen(true)}
+      >
+        New Game
       </Button>
       <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
         <DialogTitle>Restart?</DialogTitle>

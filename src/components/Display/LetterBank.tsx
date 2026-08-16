@@ -19,7 +19,7 @@ const LetterBank: React.FC<LetterBankProps> = ({
       display="flex"
       gap={1}
       flexWrap="wrap"
-      sx={{ justifyContent: "center", width: "100%", maxWidth: 400 }}
+      sx={{ justifyContent: "center", width: "100%", maxWidth: 375 }}
     >
       {alphabet.map((letter) => {
         const isGuessed = guessedLetters.includes(letter);

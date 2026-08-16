@@ -149,9 +149,10 @@ const GameBoard: React.FC = () => {
       display="flex"
       flexDirection="column"
       gap={4}
-      py={4}
+      pt={16}
+      pb={4}
+      sx={{ position: "relative" }}
     >
-      <Scoreboard score={totalScore} />
       <WordDisplay wordState={revealedLetters} />
       <HintDisplay
         open={hintDialogOpen}
@@ -211,7 +212,12 @@ const GameBoard: React.FC = () => {
           wordLength={currentWord.word.length}
         />
       )}
-      <RestartButton onRestart={handleRestart} />
+      <Box sx={{ position: "absolute", top: 2, left: 2, zIndex: 1 }}>
+        <RestartButton onRestart={handleRestart} />
+      </Box>
+      <Box sx={{ position: "absolute", top: 2, right: 2, zIndex: 1 }}>
+        <Scoreboard score={totalScore} />
+      </Box>
     </Box>
   );
 };

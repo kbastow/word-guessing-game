@@ -21,7 +21,7 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ score }) => {
           color: theme.palette.primary.main,
         }}
       >
-        <Typography variant="h5" component="span">
+        <Typography component="span">
           Score: {score}
         </Typography>
       </Box>

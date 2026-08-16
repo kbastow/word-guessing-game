@@ -16,8 +16,8 @@ const WordDisplay: React.FC<WordDisplayProps> = ({ wordState }) => {
           <Box
             key={index}
             sx={{
-              width: 40,
-              height: 40,
+              width: 48,
+              height: 48,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
