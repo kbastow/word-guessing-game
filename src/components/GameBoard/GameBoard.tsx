@@ -6,9 +6,19 @@ import InputSection from "../Input/InputSection";
 import RestartButton from "../Controls/RestartButton";
 import HintDisplay from "../Display/HintDisplay";
 import HintButton from "../Controls/HintButton";
-import { Box, Button, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  IconButton,
+} from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
+import CloseIcon from "@mui/icons-material/Close";
 import { wordList } from "../../data/wordList.ts";
 
 const MAX_ATTEMPTS = 5;
@@ -32,6 +42,7 @@ const GameBoard: React.FC = () => {
   );
   const [revealedHints, setRevealedHints] = useState<number>(1);
   const [hintDialogOpen, setHintDialogOpen] = useState<boolean>(false);
+  const [resultDialogOpen, setResultDialogOpen] = useState<boolean>(false);
   const [gameWon, setGameWon] = useState<boolean>(false);
   const [gameLost, setGameLost] = useState<boolean>(false);
   const [attempts, setAttempts] = useState<number>(0);
@@ -49,6 +60,7 @@ const GameBoard: React.FC = () => {
         });
         setRevealedLetters(currentWord.word.split(""));
         setGameWon(true);
+        setResultDialogOpen(true);
         const scoreForRound = Math.max(
           0,
           100 -
@@ -78,6 +90,7 @@ const GameBoard: React.FC = () => {
         if (newAttempts >= MAX_ATTEMPTS) {
           console.log("Game lost :(");
           setGameLost(true);
+          setResultDialogOpen(true);
         }
       }
 
@@ -116,6 +129,7 @@ const GameBoard: React.FC = () => {
     setAttempts(0);
     setCurrentScore(100);
     setHintDialogOpen(false);
+    setResultDialogOpen(false);
     if (isRestart) {
       setTotalScore(0);
       console.log("Game reset!");
@@ -171,40 +185,102 @@ const GameBoard: React.FC = () => {
         wordLetters={currentWord.word.toUpperCase().split("")}
         onLetterClick={handleLetterClick}
       />
-      {gameWon ? (
-        <Box display="flex" flexDirection="column" alignItems="center" gap={4} p={4}>
-          <Box display="flex" alignItems="center" gap={1}>
+      <Dialog
+        open={resultDialogOpen && gameWon}
+        onClose={() => setResultDialogOpen(false)}
+        aria-labelledby="win-dialog-title"
+        slotProps={{
+          paper: {
+            sx: (theme) => ({
+              borderRadius: `${theme.shape.borderRadius}px`, py: 4, px: 8,
+            }),
+          },
+        }}
+      >
+        <DialogTitle id="win-dialog-title" sx={{ textAlign: "center" }}>
+          <IconButton
+            aria-label="close"
+            onClick={() => setResultDialogOpen(false)}
+            sx={{ position: "absolute", right: 8, top: 8 }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent sx={{ textAlign: "center", px: 4, py: 3 }}>
+          <Box display="flex" alignItems="center" gap={1} justifyContent="center">
             <CheckCircleIcon color="success" fontSize="large" />
             <Typography variant="h5" color="success.main">
               Congratulations! You guessed the word. Score for this round is:{" "}
               {currentScore}
             </Typography>
           </Box>
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: "center", pb: 3 }}>
           <Button
             variant="contained"
             color="primary"
-            onClick={handleContinuePlaying}
+            onClick={() => {
+              setResultDialogOpen(false);
+              handleContinuePlaying();
+            }}
           >
-            Next Word
+            Next Round
           </Button>
-        </Box>
-      ) : gameLost ? (
-        <Box display="flex" flexDirection="column" alignItems="center" gap={4} py={4}>
-          <Box display="flex" alignItems="center" gap={1}>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={resultDialogOpen && gameLost}
+        onClose={() => setResultDialogOpen(false)}
+        aria-labelledby="loss-dialog-title"
+        slotProps={{
+          paper: {
+            sx: (theme) => ({
+              borderRadius: `${theme.shape.borderRadius}px`, py: 4, px: 8,
+            }),
+          },
+        }}
+      >
+        <DialogTitle id="loss-dialog-title" sx={{ textAlign: "center" }}>
+          <IconButton
+            aria-label="close"
+            onClick={() => setResultDialogOpen(false)}
+            sx={{ position: "absolute", right: 8, top: 8 }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent sx={{ textAlign: "center", px: 4, py: 3 }}>
+          <Box display="flex" alignItems="center" gap={1} justifyContent="center">
             <CancelIcon color="error" fontSize="large" />
             <Typography variant="h5" color="error.main">
               You lose! The correct word was "{currentWord.word.toUpperCase()}".
             </Typography>
           </Box>
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: "center", pb: 3 }}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              setResultDialogOpen(false);
+              handleRestart();
+            }}
+          >
+            Restart
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {gameWon ? (
+        <Box display="flex" flexDirection="column" alignItems="center" gap={4} p={4}>
           <Button
             variant="contained"
             color="primary"
             onClick={handleContinuePlaying}
           >
-            Next Word
+            Next Round
           </Button>
         </Box>
-      ) : (
+      ) : gameLost ? null : (
         <InputSection
           inputValue={inputValue}
           onInputChange={handleInputChange}
