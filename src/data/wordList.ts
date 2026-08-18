@@ -1,4 +1,6 @@
-export const wordList = [
+import type { WordEntry } from "../types/word";
+
+export const wordList: WordEntry[] = [
   {
     word: "apple",
     hints: ["Fruit", "Keeps doctors away", "Tech company"],
