@@ -40,7 +40,7 @@ const GameBoard: React.FC = () => {
   const [revealedLetters, setRevealedLetters] = useState<string[]>(
     Array(currentWord.word.length).fill("_")
   );
-  const [revealedHints, setRevealedHints] = useState<number>(1);
+  const [revealedHints, setRevealedHints] = useState<number>(0);
   const [hintDialogOpen, setHintDialogOpen] = useState<boolean>(false);
   const [resultDialogOpen, setResultDialogOpen] = useState<boolean>(false);
   const [gameWon, setGameWon] = useState<boolean>(false);
@@ -123,7 +123,7 @@ const GameBoard: React.FC = () => {
     setGuessedLetters([]);
     setInputValue("");
     setRevealedLetters(Array(newWord.word.length).fill("_"));
-    setRevealedHints(1);
+    setRevealedHints(0);
     setGameWon(false);
     setGameLost(false);
     setAttempts(0);
@@ -198,6 +198,7 @@ const GameBoard: React.FC = () => {
         }}
       >
         <DialogTitle id="win-dialog-title" sx={{ textAlign: "center" }}>
+          You Win!
           <IconButton
             aria-label="close"
             onClick={() => setResultDialogOpen(false)}
@@ -207,11 +208,10 @@ const GameBoard: React.FC = () => {
           </IconButton>
         </DialogTitle>
         <DialogContent sx={{ textAlign: "center", px: 4, py: 3 }}>
-          <Box display="flex" alignItems="center" gap={1} justifyContent="center">
+          <Box display="flex" flexDirection="column" alignItems="center" gap={1} justifyContent="center">
             <CheckCircleIcon color="success" fontSize="large" />
-            <Typography variant="h5" color="success.main">
-              Congratulations! You guessed the word. Score for this round is:{" "}
-              {currentScore}
+            <Typography variant="h5" color="text.primary">
+              You scored {currentScore} points this round.
             </Typography>
           </Box>
         </DialogContent>
@@ -241,6 +241,7 @@ const GameBoard: React.FC = () => {
         }}
       >
         <DialogTitle id="loss-dialog-title" sx={{ textAlign: "center" }}>
+          Game Over
           <IconButton
             aria-label="close"
             onClick={() => setResultDialogOpen(false)}
@@ -250,10 +251,11 @@ const GameBoard: React.FC = () => {
           </IconButton>
         </DialogTitle>
         <DialogContent sx={{ textAlign: "center", px: 4, py: 3 }}>
-          <Box display="flex" alignItems="center" gap={1} justifyContent="center">
+          <Box display="flex" flexDirection="column" alignItems="center" gap={1} justifyContent="center">
             <CancelIcon color="error" fontSize="large" />
-            <Typography variant="h5" color="error.main">
-              You lose! The correct word was "{currentWord.word.toUpperCase()}".
+            <Typography variant="h5" color="text.primary">
+              The word was '
+              {currentWord.word.toUpperCase()}'.
             </Typography>
           </Box>
         </DialogContent>
@@ -270,6 +272,7 @@ const GameBoard: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      {}
       {gameWon ? (
         <Box display="flex" flexDirection="column" alignItems="center" gap={4} p={4}>
           <Button
