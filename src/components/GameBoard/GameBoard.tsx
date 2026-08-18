@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import WordDisplay from "../Display/WordDisplay";
 import Scoreboard from "../Display/Scoreboard.tsx";
 import LetterBank from "../Display/LetterBank";
@@ -19,142 +19,85 @@ import {
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import CloseIcon from "@mui/icons-material/Close";
-import { wordList } from "../../data/wordList.ts";
+import { useWordGame } from "../../hooks/useWordGame";
+import { useGuessLogic } from "../../hooks/useGuessLogic";
+import { useScore } from "../../hooks/useScore";
+import { useHintManager } from "../../hooks/useHintManager";
+import { useGameResult } from "../../hooks/useGameResult";
 
 const MAX_ATTEMPTS = 5;
-const POINTS_PER_GUESS = 20;
-const POINTS_PER_HINT = 10;
 
 const GameBoard: React.FC = () => {
-  // Initialise random word
-  const generateRandomWord = () => {
-    const randomWord = wordList[Math.floor(Math.random() * wordList.length)];
-    console.log("The word to guess is:", randomWord.word.toUpperCase());
-    return { word: randomWord.word, hints: randomWord.hints };
-  };
+  const { currentWord, startNewWord } = useWordGame();
+  const {
+    inputValue,
+    guessedLetters,
+    revealedLetters,
+    attempts,
+    submitGuess,
+    addLetterToInput,
+    updateInput,
+    resetGuessState,
+  } = useGuessLogic(currentWord.word, MAX_ATTEMPTS);
+  const {
+    currentScore,
+    totalScore,
+    applyHintPenalty,
+    recordRoundWin,
+    resetRoundScore,
+    resetTotalScore,
+  } = useScore();
+  const {
+    revealedHints,
+    hintDialogOpen,
+    revealHint,
+    closeHintDialog,
+    resetHints,
+  } = useHintManager(currentWord.hints.length);
+  const {
+    gameWon,
+    gameLost,
+    resultDialogOpen,
+    openWinDialog,
+    openLossDialog,
+    closeResultDialog,
+    resetResult,
+  } = useGameResult();
 
-  // State
-  const [currentWord, setCurrentWord] = useState(generateRandomWord);
-  const [guessedLetters, setGuessedLetters] = useState<string[]>([]);
-  const [inputValue, setInputValue] = useState<string>("");
-  const [revealedLetters, setRevealedLetters] = useState<string[]>(
-    Array(currentWord.word.length).fill("_")
-  );
-  const [revealedHints, setRevealedHints] = useState<number>(0);
-  const [hintDialogOpen, setHintDialogOpen] = useState<boolean>(false);
-  const [resultDialogOpen, setResultDialogOpen] = useState<boolean>(false);
-  const [gameWon, setGameWon] = useState<boolean>(false);
-  const [gameLost, setGameLost] = useState<boolean>(false);
-  const [attempts, setAttempts] = useState<number>(0);
-  const [totalScore, setTotalScore] = useState<number>(0);
-  const [currentScore, setCurrentScore] = useState<number>(100);
-
-  // Handle guess function
   const handleGuess = (guess: string) => {
-    if (guess.length === currentWord.word.length) {
-      const newAttempts = attempts + 1;
-      if (guess.toUpperCase() === currentWord.word.toUpperCase()) {
-        // Correct word guessed: reveal the entire word
-        console.log("Correct word guessed! Score for round is:", {
-          currentScore,
-        });
-        setRevealedLetters(currentWord.word.split(""));
-        setGameWon(true);
-        setResultDialogOpen(true);
-        const scoreForRound = Math.max(
-          0,
-          100 -
-            (newAttempts - 1) * POINTS_PER_GUESS -
-            (revealedHints - 1) * POINTS_PER_HINT
-        );
-        setCurrentScore(scoreForRound);
-        setTotalScore((prev) => prev + scoreForRound);
-      } else {
-        // Incorrect word guessed: reveal only the correctly guessed letters
-        setRevealedLetters((prev) =>
-          currentWord.word
-            .split("")
-            .map((char, index) =>
-              guess
-                .split("")
-                .some(
-                  (guessedChar) =>
-                    guessedChar.toUpperCase() === char.toUpperCase()
-                )
-                ? currentWord.word[index].toUpperCase()
-                : prev[index]
-            )
-        );
+    const result = submitGuess(guess);
+    if (!result) return;
 
-        // Check if maximum attempts is reached
-        if (newAttempts >= MAX_ATTEMPTS) {
-          console.log("Game lost :(");
-          setGameLost(true);
-          setResultDialogOpen(true);
-        }
-      }
-
-      setAttempts(newAttempts);
-
-      // Add all letters from the guessed word to guessedLetters
-      const newGuessedLetters = guess.toUpperCase().split("");
-      setGuessedLetters((prev) => [
-        ...new Set([...prev, ...newGuessedLetters]),
-      ]);
-      setInputValue("");
-    } else {
-      console.log("Invalid guess length");
+    if (result.correct) {
+      recordRoundWin(result.attempts, revealedHints);
+      openWinDialog();
+    } else if (result.attemptsExhausted) {
+      openLossDialog();
     }
   };
 
-  const handleLetterClick = (letter: string) => {
-    setInputValue((prev) => prev + letter);
-    console.log("Letter clicked", letter);
+  const handleGetHint = () => {
+    revealHint();
+    applyHintPenalty();
   };
 
-  const handleInputChange = (value: string) => {
-    setInputValue(value);
-  };
-
-  // Helper function to reset the game state
   const resetGameState = (isRestart: boolean) => {
-    const newWord = generateRandomWord();
-    setCurrentWord(newWord);
-    setGuessedLetters([]);
-    setInputValue("");
-    setRevealedLetters(Array(newWord.word.length).fill("_"));
-    setRevealedHints(0);
-    setGameWon(false);
-    setGameLost(false);
-    setAttempts(0);
-    setCurrentScore(100);
-    setHintDialogOpen(false);
-    setResultDialogOpen(false);
+    const newWord = startNewWord();
+    resetGuessState(newWord.word.length);
+    resetHints();
+    resetResult();
+    resetRoundScore();
     if (isRestart) {
-      setTotalScore(0);
-      console.log("Game reset!");
-    } else {
-      console.log("Next round.");
+      resetTotalScore();
     }
   };
 
-  // Handle restart function
   const handleRestart = () => {
     resetGameState(true);
   };
 
-  // Handle continue playing function
   const handleContinuePlaying = () => {
     resetGameState(false);
-  };
-
-  // Handle hint function
-  const handleGetHint = () => {
-    if (revealedHints < currentWord.hints.length) {
-      setRevealedHints((prev) => prev + 1);
-    }
-    setCurrentScore((prev) => Math.max(0, prev - POINTS_PER_HINT));
-    setHintDialogOpen(true);
   };
 
   return (
@@ -170,7 +113,7 @@ const GameBoard: React.FC = () => {
       <WordDisplay wordState={revealedLetters} />
       <HintDisplay
         open={hintDialogOpen}
-        onClose={() => setHintDialogOpen(false)}
+        onClose={closeHintDialog}
         revealedHints={[currentWord.hints[revealedHints - 1]]}
         totalHints={currentWord.hints.length}
         currentHintIndex={revealedHints}
@@ -183,11 +126,11 @@ const GameBoard: React.FC = () => {
       <LetterBank
         guessedLetters={guessedLetters}
         wordLetters={currentWord.word.toUpperCase().split("")}
-        onLetterClick={handleLetterClick}
+        onLetterClick={addLetterToInput}
       />
       <Dialog
         open={resultDialogOpen && gameWon}
-        onClose={() => setResultDialogOpen(false)}
+        onClose={closeResultDialog}
         aria-labelledby="win-dialog-title"
         slotProps={{
           paper: {
@@ -201,7 +144,7 @@ const GameBoard: React.FC = () => {
           You Win!
           <IconButton
             aria-label="close"
-            onClick={() => setResultDialogOpen(false)}
+            onClick={closeResultDialog}
             sx={{ position: "absolute", right: 8, top: 8 }}
           >
             <CloseIcon />
@@ -220,7 +163,7 @@ const GameBoard: React.FC = () => {
             variant="contained"
             color="primary"
             onClick={() => {
-              setResultDialogOpen(false);
+              closeResultDialog();
               handleContinuePlaying();
             }}
           >
@@ -230,7 +173,7 @@ const GameBoard: React.FC = () => {
       </Dialog>
       <Dialog
         open={resultDialogOpen && gameLost}
-        onClose={() => setResultDialogOpen(false)}
+        onClose={closeResultDialog}
         aria-labelledby="loss-dialog-title"
         slotProps={{
           paper: {
@@ -244,7 +187,7 @@ const GameBoard: React.FC = () => {
           Game Over
           <IconButton
             aria-label="close"
-            onClick={() => setResultDialogOpen(false)}
+            onClick={closeResultDialog}
             sx={{ position: "absolute", right: 8, top: 8 }}
           >
             <CloseIcon />
@@ -264,7 +207,7 @@ const GameBoard: React.FC = () => {
             variant="contained"
             color="primary"
             onClick={() => {
-              setResultDialogOpen(false);
+              closeResultDialog();
               handleRestart();
             }}
           >
@@ -286,7 +229,7 @@ const GameBoard: React.FC = () => {
       ) : gameLost ? null : (
         <InputSection
           inputValue={inputValue}
-          onInputChange={handleInputChange}
+          onInputChange={updateInput}
           onGuess={handleGuess}
           wordLength={currentWord.word.length}
           attemptsRemaining={MAX_ATTEMPTS - attempts}
