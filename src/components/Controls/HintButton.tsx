@@ -12,7 +12,7 @@ const HintButton: React.FC<HintButtonProps> = ({
   disabled,
   hintsRemaining,
 }) => {
-  const displayedHintsRemaining = disabled ? 0 : hintsRemaining + 1;
+  const displayedHintsRemaining = disabled ? 0 : hintsRemaining;
 
   return (
     <Box display="flex" flexDirection="column" alignItems="center" gap={0.5}>

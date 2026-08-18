@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, TextField } from "@mui/material";
+import { Box, TextField, Typography } from "@mui/material";
 import SubmitButton from "../Controls/SubmitButton";
 
 interface InputSectionProps {
@@ -7,6 +7,7 @@ interface InputSectionProps {
   onInputChange: (value: string) => void;
   onGuess: (guess: string) => void;
   wordLength: number;
+  attemptsRemaining: number;
 }
 
 const InputSection: React.FC<InputSectionProps> = ({
@@ -14,6 +15,7 @@ const InputSection: React.FC<InputSectionProps> = ({
   onInputChange,
   onGuess,
   wordLength,
+  attemptsRemaining,
 }) => {
   const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
 
@@ -44,7 +46,13 @@ const InputSection: React.FC<InputSectionProps> = ({
           showError ? `Word must be exactly ${wordLength} letters` : ""
         }
       />
-      <SubmitButton onSubmit={handleSubmit} disabled={isInputInvalid} />
+      <Box display="flex" flexDirection="column" alignItems="center" gap={0.5}>
+        <SubmitButton onSubmit={handleSubmit} disabled={isInputInvalid} />
+        <Typography variant="caption" color="text.secondary">
+          {attemptsRemaining} attempt{attemptsRemaining === 1 ? "" : "s"}{" "}
+          remaining
+        </Typography>
+      </Box>
     </Box>
   );
 };

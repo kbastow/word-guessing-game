@@ -289,6 +289,7 @@ const GameBoard: React.FC = () => {
           onInputChange={handleInputChange}
           onGuess={handleGuess}
           wordLength={currentWord.word.length}
+          attemptsRemaining={MAX_ATTEMPTS - attempts}
         />
       )}
       <Box sx={{ position: "absolute", top: 2, left: 2, zIndex: 1 }}>
