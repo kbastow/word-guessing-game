@@ -24,26 +24,30 @@ src/
     wordList.ts    # Word + hints data source
   styles/
     theme.ts       # Material UI theme configuration
-  hooks/           # Placeholder directory (currently empty; future custom hooks)
-  types/           # Placeholder directory (currently empty; future shared types)
+  hooks/
+    useWordGame.ts     # Picks and tracks the current word
+    useGuessLogic.ts   # Guess submission and letter-reveal state
+    useScore.ts        # Round and total score calculation
+    useHintManager.ts  # Hint reveal state and hint dialog
+    useGameResult.ts   # Win/loss state and result dialog
+  types/
+    word.ts        # WordEntry type
+    guess.ts       # GuessResult type
   App.tsx          # App shell and theme provider
   main.tsx         # React entry point
 ```
 
 ## How the game logic is organized
 
-Most logic currently lives in:
+`GameBoard.tsx` handles orchestration and rendering; each hook owns its own slice of state and logic.
 
-- `src/components/GameBoard/GameBoard.tsx`
+- `useWordGame` — picks a random word from `wordList` and exposes a function to start a new one
+- `useGuessLogic` — tracks input value, guessed letters, and revealed letters; validates guesses against the target word and tracks attempts
+- `useScore` — tracks round and total score, applying the hint-penalty and win-scoring rules
+- `useHintManager` — tracks how many hints are revealed and controls the hint dialog
+- `useGameResult` — tracks win/loss state and controls the result dialog
 
-### Responsibilities in `GameBoard`
-
-- Picks a random word from `wordList`
-- Tracks round state (`inputValue`, `guessedLetters`, `revealedLetters`, attempts, hints)
-- Handles validation of word-length guesses
-- Applies scoring rules
-- Moves between game states (playing, won, lost)
-- Handles full restart vs next-word flow
+`GameBoard` wires these hooks together, decides when to call each one in response to a guess or hint request, and resets them all on restart or next-word.
 
 ### Scoring model
 
@@ -81,6 +85,4 @@ Most logic currently lives in:
 
 ## What I'd do differently if I built this again
 
-- Develop using an MUI theme to enhance UI styling
-- `src/hooks` and `src/types` are present but empty. The game works as-is, to grow this app, a good next step is to extract scoring/guess/hint state from `GameBoard` into custom hooks and shared types.
 - Integrate an LLM-backed content pipeline to generate and validate wordList entries (word + progressive hints) so game content can scale with less manual authoring.
